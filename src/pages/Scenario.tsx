@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
-import { ChevronLeft, ChevronRight, ShoppingCart, Utensils, Plane, Hotel, Stethoscope } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ShoppingCart, Utensils, Plane, Hotel, Stethoscope, BriefcaseBusiness } from 'lucide-react';
 import Button from '../components/atoms/Button';
 import Logo from '../components/atoms/Logo';
 
@@ -10,6 +10,7 @@ const Scenario: React.FC = () => {
   const [currentScenario, setCurrentScenario] = useState(0);
 
   const scenarios = [
+    { id: 'interview', title: 'Entrevista de trabajo', icon: BriefcaseBusiness },
     { id: 'shopping', title: 'En el supermercado', icon: ShoppingCart },
     { id: 'restaurant', title: 'En el restaurante', icon: Utensils },
     { id: 'airport', title: 'En el aeropuerto', icon: Plane },
@@ -17,6 +18,32 @@ const Scenario: React.FC = () => {
     { id: 'doctor', title: 'En el médico', icon: Stethoscope }
   ];
 
+  const handleClick = async (scenarioId: string) => {
+    try {
+      const response = await fetch("http://localhost:8080/api/conversation/prepare-agent", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          scenario: scenarioId,
+          topic: "free",
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error("Error en la conexión con la API");
+      }
+
+      const data = await response.json();
+
+      navigate('/conversation');
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  
   const nextScenario = () => {
     setCurrentScenario((prev) => (prev + 1) % scenarios.length);
   };
@@ -79,7 +106,7 @@ const Scenario: React.FC = () => {
             </div>
             
             <Button 
-              onClick={() => navigate('/conversation')}
+              onClick={() => handleClick(scenarios[currentScenario].id)}
               className="w-full"
               size="lg"
             >
