@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
@@ -23,54 +23,87 @@ const Conversation: React.FC = () => {
       timestamp: new Date()
     }
   ]);
+
   const [isRecording, setIsRecording] = useState(false);
-
-  const simulatedResponses = [
-    "That's very interesting! Can you tell me more about that?",
-    "I see! How does that make you feel?",
-    "Great! What do you think about trying something different?",
-    "Wonderful! Let me ask you another question about this topic.",
-    "Perfect! Your English is improving. Let's continue our conversation."
-  ];
-
-  const handleVoiceInput = () => {
-    if (!isRecording) {
-      // Simulate user speaking
-      const userMessage: Message = {
-        id: Date.now().toString(),
-        speaker: 'user',
-        text: 'I would like to practice talking about my hobbies and interests.',
-        timestamp: new Date()
-      };
-
-      setMessages(prev => [...prev, userMessage]);
-
-      // Simulate Emily's response
-      setTimeout(() => {
-        const emilyResponse: Message = {
-          id: (Date.now() + 1).toString(),
-          speaker: 'emily',
-          text: simulatedResponses[Math.floor(Math.random() * simulatedResponses.length)],
-          timestamp: new Date()
-        };
-        setMessages(prev => [...prev, emilyResponse]);
-      }, 1500);
-    }
-  };
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
 
   const handleEndConversation = () => {
     navigate('/report');
   };
 
-  const toggleRecording = () => {
-    setIsRecording(!isRecording);
-    
+  const toggleRecording = async () => {
     if (!isRecording) {
-      // Start recording after a delay to show the recording state
-      setTimeout(() => {
-        setIsRecording(false);
-        handleVoiceInput();
-      }, 2000);
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        const recorder = new MediaRecorder(stream);
+        const chunks: Blob[] = [];
+
+        recorder.ondataavailable = (e) => {
+          if (e.data.size > 0) {
+            chunks.push(e.data);
+          }
+        };
+
+        recorder.onstop = async () => {
+          const audioBlob = new Blob(chunks, { type: 'audio/webm' });
+          const formData = new FormData();
+          formData.append("file", audioBlob, "recording.webm");
+
+          try {
+            const response = await fetch("http://localhost:8080/api/conversation/converse", {
+              method: "POST",
+              headers: {
+                "X-User-Id": "demo"
+              },
+              body: formData
+            });
+
+            if (!response.ok) throw new Error("Error al enviar el audio");
+
+            const data = await response.json();
+
+            const userMessage: Message = {
+              id: Date.now().toString(),
+              speaker: 'user',
+              text: data.userUtterance,
+              timestamp: new Date()
+            };
+
+            const emilyMessage: Message = {
+              id: (Date.now() + 1).toString(),
+              speaker: 'emily',
+              text: data.agentResponse,
+              timestamp: new Date()
+            };
+
+            setMessages((prev) => [...prev, userMessage, emilyMessage]);
+            const utterance = new SpeechSynthesisUtterance(data.agentResponse);
+            utterance.lang = 'en-US';
+            utterance.pitch = 1;
+            utterance.rate = 1;
+            speechSynthesis.speak(utterance);
+
+          } catch (error) {
+            console.error("Error en la conversación:", error);
+          }
+
+          stream.getTracks().forEach(track => track.stop());
+          setAudioChunks([]);
+        };
+
+        recorder.start();
+        mediaRecorderRef.current = recorder;
+        setAudioChunks(chunks);
+        setIsRecording(true);
+
+      } catch (err) {
+        console.error("No se pudo acceder al micrófono:", err);
+      }
+
+    } else {
+      mediaRecorderRef.current?.stop();
+      setIsRecording(false);
     }
   };
 
@@ -113,7 +146,6 @@ const Conversation: React.FC = () => {
                 />
                 <AvatarFallback className="gradient-primary text-white text-6xl">E</AvatarFallback>
               </Avatar>
-              {/* Speaking indicator */}
               <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
                 <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg">
                   <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
@@ -139,17 +171,16 @@ const Conversation: React.FC = () => {
                   <div className={`flex items-start gap-3 max-w-xs ${
                     message.speaker === 'user' ? 'flex-row-reverse' : 'flex-row'
                   }`}>
-                    {message.speaker === 'emily' && (
-                      <Avatar className="w-8 h-8 flex-shrink-0">
-                        <AvatarImage src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=400&fit=crop&crop=face" alt="Emily" />
-                        <AvatarFallback className="gradient-primary text-white text-xs">E</AvatarFallback>
-                      </Avatar>
-                    )}
-                    {message.speaker === 'user' && (
-                      <Avatar className="w-8 h-8 flex-shrink-0">
+                    <Avatar className="w-8 h-8 flex-shrink-0">
+                      {message.speaker === 'emily' ? (
+                        <>
+                          <AvatarImage src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=400&fit=crop&crop=face" />
+                          <AvatarFallback className="gradient-primary text-white text-xs">E</AvatarFallback>
+                        </>
+                      ) : (
                         <AvatarFallback className="bg-blue-500 text-white text-xs">U</AvatarFallback>
-                      </Avatar>
-                    )}
+                      )}
+                    </Avatar>
                     <div className={`px-4 py-3 rounded-2xl ${
                       message.speaker === 'user' 
                         ? 'gradient-primary text-white' 
