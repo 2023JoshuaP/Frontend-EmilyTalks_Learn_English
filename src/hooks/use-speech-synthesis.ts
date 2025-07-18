@@ -25,6 +25,16 @@ export const useSpeechSynthesis = (): UseSpeechSynthesisReturn => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
 
+  // Encontrar voz femenina
+  const getFemaleVoice = () => {
+    const voices = speechSynthesis.getVoices();
+    const ziraVoice = voices.find(voice => 
+      voice.name.includes('Zira') || voice.name.includes('Microsoft Zira')
+    );
+    
+    return ziraVoice || null;
+  };
+
   useEffect(() => {
     const handleSpeechStart = () => setIsSpeaking(true);
     const handleSpeechEnd = () => setIsSpeaking(false);
@@ -59,6 +69,12 @@ export const useSpeechSynthesis = (): UseSpeechSynthesisReturn => {
     
     if (options.voice) {
       utterance.voice = options.voice;
+    } else {
+      // Usar zira si no se define una voz
+      const femaleVoice = getFemaleVoice();
+      if (femaleVoice) {
+        utterance.voice = femaleVoice;
+      }
     }
 
     // Event listeners
