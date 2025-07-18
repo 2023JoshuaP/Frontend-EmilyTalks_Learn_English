@@ -9,7 +9,7 @@ const Report: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-50 p-4">
       <div className="max-w-2xl mx-auto pt-8">
         <div className="text-center mb-8">
           <Logo size="md" />
@@ -49,19 +49,19 @@ const Report: React.FC = () => {
               />
             </div>
             
-            <div className="bg-green-50 rounded-xl p-6">
-              <h3 className="font-semibold mb-3 text-green-800">Logros de la sesión</h3>
+            <div className="bg-blue-50 rounded-xl p-6">
+              <h3 className="font-semibold mb-3 text-blue-800">Logros de la sesión</h3>
               <div className="space-y-2">
                 <div className="flex items-center gap-2">
-                  <span className="text-green-600">✓</span>
+                  <span className="text-blue-600">✓</span>
                   <span className="text-sm">Mantuviste una conversación de 15 minutos</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-600">✓</span>
+                  <span className="text-blue-600">✓</span>
                   <span className="text-sm">Usaste 25 palabras nuevas correctamente</span>
                 </div>
                 <div className="flex items-center gap-2">
-                  <span className="text-green-600">✓</span>
+                  <span className="text-blue-600">✓</span>
                   <span className="text-sm">Mejoraste tu pronunciación en un 10%</span>
                 </div>
               </div>

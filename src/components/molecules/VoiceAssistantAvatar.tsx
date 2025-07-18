@@ -63,7 +63,7 @@ const VoiceAssistantAvatar: React.FC<VoiceAssistantAvatarProps> = ({
               isSpeaking 
                 ? 'bg-blue-500 animate-pulse' 
                 : isOnline 
-                  ? 'bg-green-500 animate-pulse' 
+                  ? 'bg-blue-500 animate-pulse' 
                   : 'bg-gray-400'
             }`}></div>
             <span className="text-xs font-medium">

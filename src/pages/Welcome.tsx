@@ -7,9 +7,9 @@ const Welcome: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 via-blue-50 to-purple-50 relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-blue-50 to-purple-50 relative overflow-hidden">
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-4 -right-4 w-72 h-72 bg-green-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-bounce-slow"></div>
+        <div className="absolute -top-4 -right-4 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-bounce-slow"></div>
         <div className="absolute top-1/2 -left-4 w-72 h-72 bg-blue-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-bounce-slow" style={{animationDelay: '2s'}}></div>
         <div className="absolute -bottom-8 left-1/2 w-72 h-72 bg-purple-200 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-bounce-slow" style={{animationDelay: '4s'}}></div>
       </div>
@@ -20,8 +20,8 @@ const Welcome: React.FC = () => {
         </div>
         
         <div className="max-w-2xl mb-12">
-          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">
-            Master English Conversation
+          <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-gradient-to-r from-pink-600 to-blue-600 bg-clip-text text-transparent">
+            Improve your Conversation
           </h1>
           <p className="text-xl text-muted-foreground mb-8 leading-relaxed">
             Practice real conversations with AI-powered Emily. Improve your speaking skills naturally through interactive dialogues tailored to your level.
@@ -33,7 +33,7 @@ const Welcome: React.FC = () => {
               onClick={() => navigate('/register')}
               className="min-w-[200px]"
             >
-              Registrarse
+              Register
             </Button>
             <Button 
               variant="outline" 
@@ -48,7 +48,7 @@ const Welcome: React.FC = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mt-12">
           <div className="text-center">
-            <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🎯</span>
             </div>
             <h3 className="font-semibold mb-2">Personalized Learning</h3>

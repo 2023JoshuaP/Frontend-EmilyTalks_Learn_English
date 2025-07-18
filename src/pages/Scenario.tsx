@@ -55,7 +55,7 @@ const Scenario: React.FC = () => {
   const CurrentIcon = scenarios[currentScenario].icon;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-50 p-4">
       <div className="max-w-md mx-auto pt-8">
         <div className="text-center mb-8">
           <Logo size="md" />

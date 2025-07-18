@@ -17,10 +17,10 @@ const Button: React.FC<ButtonProps> = ({
   const baseClasses = 'font-semibold rounded-xl transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-offset-2';
   
   const variantClasses = {
-    primary: 'gradient-primary text-white shadow-lg hover:shadow-xl focus:ring-green-500',
-    secondary: 'gradient-secondary text-white shadow-lg hover:shadow-xl focus:ring-blue-500',
-    outline: 'border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-green-500',
-    ghost: 'text-primary hover:bg-green-50 focus:ring-green-500'
+    primary: 'gradient-primary text-white shadow-lg hover:shadow-xl focus:ring-pink-500',
+    secondary: 'gradient-secondary text-white shadow-lg hover:shadow-xl focus:ring-pink-500',
+    outline: 'border-2 border-primary text-primary hover:bg-primary hover:text-white focus:ring-pink-500',
+    ghost: 'text-primary hover:bg-pink-50 focus:ring-pink-500'
   };
 
   const sizeClasses = {
