@@ -9,7 +9,7 @@ interface AuthCardProps {
 
 const AuthCard: React.FC<AuthCardProps> = ({ title, children }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-50 flex items-center justify-center p-4">
       <Card className="w-full max-w-md shadow-2xl border-0">
         <CardHeader className="text-center pb-8">
           <div className="flex justify-center mb-4">

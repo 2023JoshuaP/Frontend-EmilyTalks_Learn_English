@@ -8,10 +8,10 @@ interface LogoProps {
 
 const Logo: React.FC<LogoProps> = ({ size = 'md', showText = true, className = '' }) => {
   const sizeClasses = {
-    sm: 'w-8 h-8',
+    sm: 'w-16 h-16',
     md: 'w-12 h-12',
     lg: 'w-16 h-16',
-    xl: 'w-24 h-24'
+    xl: 'w-32 h-32'
   };
 
   const textSizeClasses = {
@@ -24,7 +24,11 @@ const Logo: React.FC<LogoProps> = ({ size = 'md', showText = true, className = '
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <div className={`${sizeClasses[size]} gradient-primary rounded-2xl flex items-center justify-center animate-float`}>
-        <span className="text-white text-2xl font-bold">🐸</span>
+          <img
+            src="/lacasita.webp"
+            alt="Logo EmilyTalks"
+            className="w-full h-full object-contain rounded-full"
+          />
       </div>
       {showText && (
         <div className="flex flex-col">

@@ -8,7 +8,7 @@ const Mode: React.FC = () => {
   const navigate = useNavigate();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 p-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-50 p-4">
       <div className="max-w-md mx-auto pt-8">
         <div className="text-center mb-8">
           <Logo size="md" />
@@ -22,7 +22,7 @@ const Mode: React.FC = () => {
             
             <div className="space-y-6">
               <div 
-                className="p-6 border-2 border-dashed border-primary/30 rounded-xl hover:border-primary/60 hover:bg-green-50 transition-all cursor-pointer group"
+                className="p-6 border-2 border-dashed border-primary/30 rounded-xl hover:border-primary/60 hover:bg-blue-50 transition-all cursor-pointer group"
                 onClick={() => navigate('/scenario')}
               >
                 <div className="text-center">

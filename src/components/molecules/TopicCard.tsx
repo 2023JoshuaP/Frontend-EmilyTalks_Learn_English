@@ -21,7 +21,7 @@ const TopicCard: React.FC<TopicCardProps> = ({
     <Card 
       className={cn(
         'aspect-square flex flex-col items-center justify-center cursor-pointer transition-all duration-200 hover:scale-105 border-2',
-        selected ? 'border-primary bg-green-50' : 'border-border hover:border-primary/50',
+        selected ? 'border-primary bg-blue-50' : 'border-border hover:border-primary/50',
         className
       )}
       onClick={onClick}

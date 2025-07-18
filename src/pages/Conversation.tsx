@@ -89,8 +89,6 @@ const Conversation: React.FC = () => {
             };
 
             setMessages((prev) => [...prev, userMessage, emilyMessage]);
-            
-            // Usar el hook para reproducir audio
             speak(data.agentResponse, {
               lang: 'en-US',
               pitch: 1,
@@ -121,21 +119,20 @@ const Conversation: React.FC = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-green-50 to-blue-50 flex flex-col">
-      {/* Header */}
+    <div className="h-screen bg-gradient-to-br from-blue-50 to-blue-50 flex flex-col">
       <div className="p-4 bg-white/80 backdrop-blur-sm border-b">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Logo size="sm" />
           <div className="flex items-center gap-3">
-            <Avatar className="w-10 h-10">
+            <Avatar className="w-16 h-16 md:w-20 md:h-20">
               <AvatarImage src={isSpeaking ? "/assets/avatars/emily-talking.gif" : "/assets/avatars/emily-static.jpg"} alt="Emily" />
-              <AvatarFallback className="gradient-primary text-white">E</AvatarFallback>
+              <AvatarFallback className="gradient-primary text-white text-lg md:text-xl">E</AvatarFallback>
             </Avatar>
             <div>
-              <span className="font-medium">Emily</span>
+              <span className="font-medium text-base md:text-lg">Emily</span>
               <div className="flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full animate-pulse ${isSpeaking ? 'bg-blue-500' : 'bg-green-500'}`}></div>
-                <span className="text-xs text-muted-foreground">{isSpeaking ? 'Speaking...' : 'Online'}</span>
+                <div className={`w-3 h-3 rounded-full animate-pulse ${isSpeaking ? 'bg-blue-500' : 'bg-blue-500'}`}></div>
+                <span className="text-xs md:text-sm text-muted-foreground">{isSpeaking ? 'Speaking...' : 'Online'}</span>
               </div>
             </div>
           </div>
@@ -144,11 +141,8 @@ const Conversation: React.FC = () => {
           </Button>
         </div>
       </div>
-
-      {/* Main Content - Split Screen */}
-      <div className="flex-1 flex">
-        {/* Left Side - AI Avatar */}
-        <div className="w-1/2 bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center p-8">
+      <div className="flex-1 flex flex-col md:flex-row">
+        <div className="w-full md:w-1/2 bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center p-8">
           <VoiceAssistantAvatar
             name="Emily"
             description="Your AI English Tutor"
@@ -159,10 +153,7 @@ const Conversation: React.FC = () => {
             size="xl"
           />
         </div>
-
-        {/* Right Side - Conversation */}
-        <div className="w-1/2 flex flex-col">
-          {/* Chat Area */}
+        <div className="w-full md:w-1/2 flex flex-col">
           <div className="h-[calc(100vh-250px)] p-6 overflow-y-auto">
             <div className="space-y-4 max-w-lg">
               {messages.map((message) => (
@@ -170,10 +161,8 @@ const Conversation: React.FC = () => {
                   key={message.id}
                   className={`flex ${message.speaker === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
-                  <div className={`flex items-start gap-3 max-w-xs ${
-                    message.speaker === 'user' ? 'flex-row-reverse' : 'flex-row'
-                  }`}>
-                    <Avatar className="w-8 h-8 flex-shrink-0">
+                  <div className={`flex items-start gap-3 max-w-xs ${message.speaker === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
+                    <Avatar className="w-10 h-10 flex-shrink-0">
                       {message.speaker === 'emily' ? (
                         <>
                           <AvatarImage src="/assets/avatars/emily-static.jpg" />
@@ -183,23 +172,12 @@ const Conversation: React.FC = () => {
                         <AvatarFallback className="bg-blue-500 text-white text-xs">U</AvatarFallback>
                       )}
                     </Avatar>
-                    <div className={`px-4 py-3 rounded-2xl ${
-                      message.speaker === 'user' 
-                        ? 'gradient-primary text-white' 
-                        : 'bg-white shadow-md border'
-                    }`}>
+                    <div className={`px-4 py-3 rounded-2xl ${message.speaker === 'user' ? 'gradient-primary text-white' : 'bg-white shadow-md border'}`}>
                       <p className="text-sm">{message.text}</p>
                       <div className="flex items-center justify-between mt-2">
-                        <span className={`text-xs ${
-                          message.speaker === 'user' ? 'text-white/70' : 'text-muted-foreground'
-                        }`}>
-                          {message.timestamp.toLocaleTimeString()}
-                        </span>
+                        <span className={`text-xs ${message.speaker === 'user' ? 'text-white/70' : 'text-muted-foreground'}`}>{message.timestamp.toLocaleTimeString()}</span>
                         {message.speaker === 'emily' && (
-                          <button 
-                            className="ml-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
-                            onClick={() => handlePlayMessage(message.text)}
-                          >
+                          <button className="ml-2 p-1 rounded-full hover:bg-gray-100 transition-colors" onClick={() => handlePlayMessage(message.text)}>
                             <Volume2 size={12} />
                           </button>
                         )}
@@ -210,24 +188,16 @@ const Conversation: React.FC = () => {
               ))}
             </div>
           </div>
-
-          {/* Voice Input Area */}
           <div className="p-6 bg-white/80 backdrop-blur-sm border-t">
             <div className="flex justify-center">
               <div className="flex flex-col items-center gap-4">
                 <button
                   onClick={toggleRecording}
-                  className={`p-6 rounded-full transition-all duration-200 shadow-lg ${
-                    isRecording 
-                      ? 'bg-red-500 text-white shadow-red-200 animate-pulse scale-110' 
-                      : 'gradient-primary text-white hover:scale-105'
-                  }`}
+                  className={`p-6 rounded-full transition-all duration-200 shadow-lg ${isRecording ? 'bg-red-500 text-white shadow-red-200 animate-pulse scale-110' : 'gradient-primary text-white hover:scale-105'}`}
                 >
                   {isRecording ? <MicOff size={32} /> : <Mic size={32} />}
                 </button>
-                <p className="text-sm text-muted-foreground text-center">
-                  {isRecording ? 'Listening... Speak now' : 'Tap to speak'}
-                </p>
+                <p className="text-sm text-muted-foreground text-center">{isRecording ? 'Listening... Speak now' : 'Tap to speak'}</p>
               </div>
             </div>
           </div>
