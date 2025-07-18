@@ -5,6 +5,8 @@ import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Mic, MicOff, Volume2 } from 'lucide-react';
 import Button from '../components/atoms/Button';
 import Logo from '../components/atoms/Logo';
+import VoiceAssistantAvatar from '../components/molecules/VoiceAssistantAvatar';
+import { useSpeechSynthesis } from '../hooks/use-speech-synthesis';
 
 interface Message {
   id: string;
@@ -15,6 +17,7 @@ interface Message {
 
 const Conversation: React.FC = () => {
   const navigate = useNavigate();
+  const { isSpeaking, speak } = useSpeechSynthesis();
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
@@ -30,6 +33,14 @@ const Conversation: React.FC = () => {
 
   const handleEndConversation = () => {
     navigate('/report');
+  };
+
+  const handlePlayMessage = (text: string) => {
+    speak(text, {
+      lang: 'en-US',
+      pitch: 1,
+      rate: 1
+    });
   };
 
   const toggleRecording = async () => {
@@ -78,11 +89,13 @@ const Conversation: React.FC = () => {
             };
 
             setMessages((prev) => [...prev, userMessage, emilyMessage]);
-            const utterance = new SpeechSynthesisUtterance(data.agentResponse);
-            utterance.lang = 'en-US';
-            utterance.pitch = 1;
-            utterance.rate = 1;
-            speechSynthesis.speak(utterance);
+            
+            // Usar el hook para reproducir audio
+            speak(data.agentResponse, {
+              lang: 'en-US',
+              pitch: 1,
+              rate: 1
+            });
 
           } catch (error) {
             console.error("Error en la conversación:", error);
@@ -108,21 +121,21 @@ const Conversation: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-green-50 to-blue-50 flex flex-col">
+    <div className="h-screen bg-gradient-to-br from-green-50 to-blue-50 flex flex-col">
       {/* Header */}
       <div className="p-4 bg-white/80 backdrop-blur-sm border-b">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <Logo size="sm" />
           <div className="flex items-center gap-3">
             <Avatar className="w-10 h-10">
-              <AvatarImage src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=400&fit=crop&crop=face" alt="Emily" />
+              <AvatarImage src={isSpeaking ? "/assets/avatars/emily-talking.gif" : "/assets/avatars/emily-static.jpg"} alt="Emily" />
               <AvatarFallback className="gradient-primary text-white">E</AvatarFallback>
             </Avatar>
             <div>
               <span className="font-medium">Emily</span>
               <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                <span className="text-xs text-muted-foreground">Online</span>
+                <div className={`w-2 h-2 rounded-full animate-pulse ${isSpeaking ? 'bg-blue-500' : 'bg-green-500'}`}></div>
+                <span className="text-xs text-muted-foreground">{isSpeaking ? 'Speaking...' : 'Online'}</span>
               </div>
             </div>
           </div>
@@ -136,32 +149,21 @@ const Conversation: React.FC = () => {
       <div className="flex-1 flex">
         {/* Left Side - AI Avatar */}
         <div className="w-1/2 bg-gradient-to-br from-green-100 to-blue-100 flex items-center justify-center p-8">
-          <div className="text-center">
-            <div className="relative mb-6">
-              <Avatar className="w-64 h-64 mx-auto shadow-2xl border-4 border-white">
-                <AvatarImage 
-                  src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=600&h=600&fit=crop&crop=face" 
-                  alt="Emily" 
-                  className="object-cover"
-                />
-                <AvatarFallback className="gradient-primary text-white text-6xl">E</AvatarFallback>
-              </Avatar>
-              <div className="absolute -bottom-2 left-1/2 transform -translate-x-1/2">
-                <div className="flex items-center gap-1 bg-white/90 backdrop-blur-sm rounded-full px-3 py-1 shadow-lg">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-xs font-medium">Speaking...</span>
-                </div>
-              </div>
-            </div>
-            <h2 className="text-2xl font-bold text-gray-800 mb-2">Emily</h2>
-            <p className="text-gray-600">Your AI English Tutor</p>
-          </div>
+          <VoiceAssistantAvatar
+            name="Emily"
+            description="Your AI English Tutor"
+            animatedSrc="/assets/avatars/emily-talking.gif"
+            staticSrc="/assets/avatars/emily-static.jpg"
+            isSpeaking={isSpeaking}
+            isOnline={true}
+            size="xl"
+          />
         </div>
 
         {/* Right Side - Conversation */}
         <div className="w-1/2 flex flex-col">
           {/* Chat Area */}
-          <div className="flex-1 p-6 overflow-y-auto">
+          <div className="h-[calc(100vh-250px)] p-6 overflow-y-auto">
             <div className="space-y-4 max-w-lg">
               {messages.map((message) => (
                 <div
@@ -174,7 +176,7 @@ const Conversation: React.FC = () => {
                     <Avatar className="w-8 h-8 flex-shrink-0">
                       {message.speaker === 'emily' ? (
                         <>
-                          <AvatarImage src="https://images.unsplash.com/photo-1581091226825-a6a2a5aee158?w=400&h=400&fit=crop&crop=face" />
+                          <AvatarImage src="/assets/avatars/emily-static.jpg" />
                           <AvatarFallback className="gradient-primary text-white text-xs">E</AvatarFallback>
                         </>
                       ) : (
@@ -194,7 +196,10 @@ const Conversation: React.FC = () => {
                           {message.timestamp.toLocaleTimeString()}
                         </span>
                         {message.speaker === 'emily' && (
-                          <button className="ml-2 p-1 rounded-full hover:bg-gray-100 transition-colors">
+                          <button 
+                            className="ml-2 p-1 rounded-full hover:bg-gray-100 transition-colors"
+                            onClick={() => handlePlayMessage(message.text)}
+                          >
                             <Volume2 size={12} />
                           </button>
                         )}
