@@ -7,15 +7,31 @@ import Button from '../components/atoms/Button';
 const Login: React.FC = () => {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    email: '',
+    username: '',
     password: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Here you would typically handle login
-    console.log('Login data:', formData);
-    navigate('/home');
+
+    try {
+      const response = await fetch('http://localhost:8080/api/users/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(formData)
+      });
+
+      if (response.ok) {
+        console.log('Login exitoso');
+        navigate('/home');
+      } else {
+        console.error('Error en login', response.status);
+      }
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,15 +45,15 @@ const Login: React.FC = () => {
     <AuthCard title="Iniciar sesión">
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
-          label="Correo electrónico"
-          name="email"
-          type="email"
-          placeholder="tu@email.com"
-          value={formData.email}
+          label="Nombre de usuario"
+          name="username"
+          type="text"
+          placeholder="Tu nombre de usuario"
+          value={formData.username}
           onChange={handleChange}
           required
         />
-        
+
         <Input
           label="Contraseña"
           name="password"
@@ -47,12 +63,12 @@ const Login: React.FC = () => {
           onChange={handleChange}
           required
         />
-        
+
         <Button type="submit" className="w-full" size="lg">
           Ingresar
         </Button>
       </form>
-      
+
       <div className="text-center">
         <p className="text-muted-foreground">
           ¿No tienes una cuenta?{' '}

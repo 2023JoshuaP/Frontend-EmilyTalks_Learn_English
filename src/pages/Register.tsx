@@ -12,10 +12,34 @@ const Register: React.FC = () => {
     password: ''
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    console.log('Registration data:', formData);
-    navigate('/home');
+
+    const payload = {
+      username: formData.nombre,
+      email: formData.email,
+      password: formData.password,
+      roles: ['USER']
+    };
+
+    try {
+      const response = await fetch('http://localhost:8080/api/users/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (response.ok) {
+        console.log('Registro exitoso');
+        navigate('/home');
+      } else {
+        console.error('Error al registrar', response.status);
+      }
+    } catch (error) {
+      console.error('Error en la solicitud:', error);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -29,15 +53,15 @@ const Register: React.FC = () => {
     <AuthCard title="Registrarse">
       <form onSubmit={handleSubmit} className="space-y-6">
         <Input
-          label="Nombre completo"
+          label="Nombre de usuario"
           name="nombre"
           type="text"
-          placeholder="Tu nombre completo"
+          placeholder="Tu nombre de usuario"
           value={formData.nombre}
           onChange={handleChange}
           required
         />
-        
+
         <Input
           label="Correo electrónico"
           name="email"
@@ -47,7 +71,7 @@ const Register: React.FC = () => {
           onChange={handleChange}
           required
         />
-        
+
         <Input
           label="Contraseña"
           name="password"
@@ -57,12 +81,12 @@ const Register: React.FC = () => {
           onChange={handleChange}
           required
         />
-        
+
         <Button type="submit" className="w-full" size="lg">
           Crear cuenta
         </Button>
       </form>
-      
+
       <div className="text-center">
         <p className="text-muted-foreground">
           ¿Ya tienes una cuenta?{' '}
