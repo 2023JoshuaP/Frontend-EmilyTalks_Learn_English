@@ -4,9 +4,20 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import ProgressCircle from '../components/molecules/ProgressCircle';
 import Button from '../components/atoms/Button';
 import Logo from '../components/atoms/Logo';
+import DownloadPdfButton from '@/components/molecules/DownloadPDFButton';
 
 const Report: React.FC = () => {
   const navigate = useNavigate();
+
+  const report = {
+    reportId: 'rpt-001',
+    userId: 'user-123',
+    generationDate: new Date().toISOString(),
+    grammarScore: 80,
+    vocabularyScore: 85,
+    feedback:
+      'Buen dominio del vocabulario, intenta mejorar el uso de tiempos verbales.'
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-50 p-4">
@@ -84,6 +95,7 @@ const Report: React.FC = () => {
                 Volver a inicio
               </Button>
             </div>
+            <DownloadPdfButton report={report} />
           </CardContent>
         </Card>
       </div>
