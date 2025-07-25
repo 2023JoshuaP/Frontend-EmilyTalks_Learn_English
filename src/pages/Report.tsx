@@ -10,14 +10,12 @@ const Report: React.FC = () => {
   const navigate = useNavigate();
 
   const report = {
-    reportId: 'rpt-001',
-    userId: 'user-123',
     generationDate: new Date().toISOString(),
     grammarScore: 80,
     vocabularyScore: 85,
     feedback:
       'Buen dominio del vocabulario, intenta mejorar el uso de tiempos verbales.'
-  }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-blue-50 p-4">
@@ -25,7 +23,7 @@ const Report: React.FC = () => {
         <div className="text-center mb-8">
           <Logo size="md" />
         </div>
-        
+
         <Card className="shadow-2xl border-0 mb-8">
           <CardHeader className="text-center pb-6">
             <h1 className="text-2xl font-bold mb-2">
@@ -35,7 +33,7 @@ const Report: React.FC = () => {
               ¡Excelente trabajo en tu práctica de conversación!
             </p>
           </CardHeader>
-          
+
           <CardContent className="space-y-8">
             <div className="bg-gray-50 rounded-xl p-6">
               <h3 className="font-semibold mb-3">Resumen de la sesión</h3>
@@ -46,7 +44,7 @@ const Report: React.FC = () => {
                 expresiones idiomáticas para alcanzar el siguiente nivel.
               </p>
             </div>
-            
+
             <div className="flex justify-center space-x-12">
               <ProgressCircle 
                 percentage={90} 
@@ -59,7 +57,7 @@ const Report: React.FC = () => {
                 color="#3b82f6"
               />
             </div>
-            
+
             <div className="bg-blue-50 rounded-xl p-6">
               <h3 className="font-semibold mb-3 text-blue-800">Logros de la sesión</h3>
               <div className="space-y-2">
@@ -77,7 +75,7 @@ const Report: React.FC = () => {
                 </div>
               </div>
             </div>
-            
+
             <div className="flex flex-col sm:flex-row gap-4">
               <Button 
                 onClick={() => navigate('/mode')}
@@ -95,6 +93,7 @@ const Report: React.FC = () => {
                 Volver a inicio
               </Button>
             </div>
+
             <DownloadPdfButton report={report} />
           </CardContent>
         </Card>
