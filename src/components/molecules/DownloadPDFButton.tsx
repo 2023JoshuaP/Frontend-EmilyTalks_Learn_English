@@ -24,7 +24,6 @@ const DownloadPdfButton: React.FC<Props> = ({ report }) => {
     try {
       const imageData = await getBase64ImageFromURL(imageUrl);
 
-      // Encabezado con fondo azul
       doc.setFillColor(0, 63, 92);
       doc.rect(0, 0, pageWidth, 30, "F");
       doc.setTextColor(255, 255, 255);
@@ -33,13 +32,11 @@ const DownloadPdfButton: React.FC<Props> = ({ report }) => {
       doc.text("EmilyTalks", 20, 20);
       doc.addImage(imageData, "PNG", pageWidth - 45, 7, 30, 15);
 
-      // Título centrado
       doc.setFontSize(18);
       doc.setFont("helvetica", "bold");
       doc.setTextColor(0, 0, 0);
       doc.text("Reporte de Sesión", pageWidth / 2, 45, { align: "center" });
 
-      // Datos generales
       doc.setFontSize(12);
       doc.setFont("helvetica", "normal");
       doc.setTextColor(50, 50, 50);
@@ -59,7 +56,6 @@ const DownloadPdfButton: React.FC<Props> = ({ report }) => {
       drawLabelValue("ID del Usuario:", report.userId);
       drawLabelValue("Fecha de Generación:", new Date(report.generationDate).toLocaleString());
 
-      // Puntajes con fondo suave
       y += 5;
       doc.setFillColor(224, 236, 247);
       doc.roundedRect(20, y, 170, 20, 4, 4, "F");
@@ -69,12 +65,10 @@ const DownloadPdfButton: React.FC<Props> = ({ report }) => {
       doc.text(`Vocabulario: ${report.vocabularyScore}`, 100, y + 13);
       y += 30;
 
-      // Línea separadora
       doc.setDrawColor(200);
       doc.line(20, y, pageWidth - 20, y);
       y += 10;
 
-      // Feedback
       doc.setFont("helvetica", "bold");
       doc.setFontSize(14);
       doc.setTextColor(0, 0, 0);
@@ -87,7 +81,6 @@ const DownloadPdfButton: React.FC<Props> = ({ report }) => {
       const feedbackLines = doc.splitTextToSize(report.feedback, 170);
       doc.text(feedbackLines, 20, y);
 
-      // Guardar PDF
       doc.save("reporte_emilytalks.pdf");
     } catch (error) {
       console.error("Error generando PDF:", error);
