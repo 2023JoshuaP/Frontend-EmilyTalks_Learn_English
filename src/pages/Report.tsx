@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import ProgressCircle from '../components/molecules/ProgressCircle';
@@ -8,13 +8,33 @@ import DownloadPdfButton from '@/components/molecules/DownloadPDFButton';
 
 const Report: React.FC = () => {
   const navigate = useNavigate();
+  const [feedback, setFeedback] = useState<string>('Cargando...');
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const fetchFeedback = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch('http://localhost:8080/api/conversation/deepseek-feedback', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ /* datos necesarios para el endpoint */ })
+        });
+        const result = await response.text();
+        setFeedback(result);
+      } catch (error) {
+        setFeedback('No se pudo obtener el feedback del backend.');
+      }
+      setIsLoading(false);
+    };
+    fetchFeedback();
+  }, []);
 
   const report = {
     generationDate: new Date().toISOString(),
     grammarScore: 80,
     vocabularyScore: 85,
-    feedback:
-      'Buen dominio del vocabulario, intenta mejorar el uso de tiempos verbales.'
+    feedback: feedback
   };
 
   return (
@@ -38,21 +58,18 @@ const Report: React.FC = () => {
             <div className="bg-gray-50 rounded-xl p-6">
               <h3 className="font-semibold mb-3">Resumen de la sesión</h3>
               <p className="text-muted-foreground text-sm leading-relaxed">
-                Durante esta sesión de práctica, demostraste un excelente dominio del vocabulario básico 
-                y mantuviste una conversación fluida. Tu pronunciación ha mejorado notablemente y 
-                mostraste confianza al expresar tus ideas. Te recomendamos continuar practicando 
-                expresiones idiomáticas para alcanzar el siguiente nivel.
+                {isLoading ? 'Cargando...' : report.feedback}
               </p>
             </div>
 
             <div className="flex justify-center space-x-12">
-              <ProgressCircle 
-                percentage={90} 
+              <ProgressCircle
+                percentage={90}
                 label="Fluidez"
                 color="#10b981"
               />
-              <ProgressCircle 
-                percentage={75} 
+              <ProgressCircle
+                percentage={75}
                 label="Pronunciación"
                 color="#3b82f6"
               />
@@ -77,14 +94,14 @@ const Report: React.FC = () => {
             </div>
 
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button 
+              <Button
                 onClick={() => navigate('/mode')}
                 className="flex-1"
                 size="lg"
               >
                 Repetir práctica
               </Button>
-              <Button 
+              <Button
                 variant="outline"
                 onClick={() => navigate('/home')}
                 className="flex-1"
@@ -94,7 +111,10 @@ const Report: React.FC = () => {
               </Button>
             </div>
 
-            <DownloadPdfButton report={report} />
+            {/* Mostrar el botón PDF solo cuando el feedback está listo */}
+            {!isLoading && feedback && (
+              <DownloadPdfButton report={report} />
+            )}
           </CardContent>
         </Card>
       </div>
