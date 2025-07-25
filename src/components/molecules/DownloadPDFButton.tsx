@@ -1,28 +1,80 @@
 import React from "react";
 import jsPDF from "jspdf";
 
-interface Report {
-  reportId: string;
-  userId: string;
+interface ReportInput {
   generationDate: string;
   grammarScore: number;
   vocabularyScore: number;
   feedback: string;
 }
 
-interface Props {
-  report: Report;
-}
-
-const DownloadPdfButton: React.FC<Props> = ({ report }) => {
+const DownloadPdfButton: React.FC<{ report: ReportInput }> = ({ report }) => {
   const handleDownload = async () => {
+    try {
+      const res = await fetch("http://localhost:8080/api/users/verifyToken", {
+        method: "GET",
+        credentials: "include"
+      });
+
+      if (!res.ok) {
+        alert("Sesión expirada. Vuelve a iniciar sesión.");
+        return;
+      }
+
+      const userDTO = await res.json();
+      const userId = userDTO.id.value;
+      const username = userDTO.username;
+      const email = userDTO.email;
+
+      // Guardar el reporte en backend
+      await fetch("http://localhost:8080/api/reports/generate", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          userId,
+          ...report
+        })
+      });
+
+      // Generar el PDF con todos los datos
+      generatePdf({
+        reportId: generateRandomId(),
+        userId,
+        username,
+        email,
+        ...report
+      });
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Hubo un error al generar el PDF");
+    }
+  };
+
+  const generateRandomId = (): string => {
+    return "xxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+      const r = (Math.random() * 16) | 0,
+        v = c === "x" ? r : (r & 0x3) | 0x8;
+      return v.toString(16);
+    });
+  };
+
+  const generatePdf = async (report: {
+    reportId: string;
+    userId: string;
+    username: string;
+    email: string;
+    generationDate: string;
+    grammarScore: number;
+    vocabularyScore: number;
+    feedback: string;
+  }) => {
     const doc = new jsPDF();
     const pageWidth = doc.internal.pageSize.getWidth();
 
-    const imageUrl = "/logo.png";
-
     try {
-      const imageData = await getBase64ImageFromURL(imageUrl);
+      const imageData = await getBase64ImageFromURL("/logo.png");
 
       doc.setFillColor(0, 63, 92);
       doc.rect(0, 0, pageWidth, 30, "F");
@@ -54,6 +106,8 @@ const DownloadPdfButton: React.FC<Props> = ({ report }) => {
 
       drawLabelValue("ID del Reporte:", report.reportId);
       drawLabelValue("ID del Usuario:", report.userId);
+      drawLabelValue("Usuario:", report.username);
+      drawLabelValue("Correo:", report.email);
       drawLabelValue("Fecha de Generación:", new Date(report.generationDate).toLocaleString());
 
       y += 5;
