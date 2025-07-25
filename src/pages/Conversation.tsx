@@ -28,6 +28,7 @@ const Conversation: React.FC = () => {
   ]);
 
   const [isRecording, setIsRecording] = useState(false);
+  const [isWaitingResponse, setIsWaitingResponse] = useState(false); // ⬅️ NUEVO
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const [audioChunks, setAudioChunks] = useState<Blob[]>([]);
 
@@ -60,6 +61,8 @@ const Conversation: React.FC = () => {
           const audioBlob = new Blob(chunks, { type: 'audio/webm' });
           const formData = new FormData();
           formData.append("file", audioBlob, "recording.webm");
+
+          setIsWaitingResponse(true); // ⬅️ MOSTRAR ANIMACIÓN
 
           try {
             const response = await fetch("http://localhost:8080/api/conversation/converse", {
@@ -99,6 +102,7 @@ const Conversation: React.FC = () => {
             console.error("Error en la conversación:", error);
           }
 
+          setIsWaitingResponse(false); // ⬅️ OCULTAR ANIMACIÓN
           stream.getTracks().forEach(track => track.stop());
           setAudioChunks([]);
         };
@@ -131,7 +135,7 @@ const Conversation: React.FC = () => {
             <div>
               <span className="font-medium text-base md:text-lg">Emily</span>
               <div className="flex items-center gap-2">
-                <div className={`w-3 h-3 rounded-full animate-pulse ${isSpeaking ? 'bg-blue-500' : 'bg-blue-500'}`}></div>
+                <div className={`w-3 h-3 rounded-full animate-pulse bg-blue-500`}></div>
                 <span className="text-xs md:text-sm text-muted-foreground">{isSpeaking ? 'Speaking...' : 'Online'}</span>
               </div>
             </div>
@@ -186,6 +190,26 @@ const Conversation: React.FC = () => {
                   </div>
                 </div>
               ))}
+
+              {/* ⬇️ ANIMACIÓN DE "ESCRIBIENDO..." */}
+              {isWaitingResponse && (
+                <div className="flex justify-start">
+                  <div className="flex items-start gap-3 max-w-xs">
+                    <Avatar className="w-10 h-10 flex-shrink-0">
+                      <AvatarImage src="/assets/avatars/emily-static.jpg" />
+                      <AvatarFallback className="gradient-primary text-white text-xs">E</AvatarFallback>
+                    </Avatar>
+                    <div className="px-4 py-3 rounded-2xl bg-white shadow-md border">
+                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                        <span className="animate-bounce">.</span>
+                        <span className="animate-bounce delay-100">.</span>
+                        <span className="animate-bounce delay-200">.</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
             </div>
           </div>
           <div className="p-6 bg-white/80 backdrop-blur-sm border-t">
